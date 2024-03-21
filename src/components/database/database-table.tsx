@@ -38,26 +38,33 @@ function isDatabaseHealthy(status: string): status is DatabaseStates {
 }
 
 // 클러스터 행을 렌더링하는 컴포넌트
-const DatabaseTableRow = ({ database, isExpanded, toggleExpand }: { database: Database, isExpanded: boolean, toggleExpand: (identifier: string) => void }) => {
+const DatabaseTableRow = ({ database, isExpanded, toggleExpand }: { database: Database, isExpanded?: boolean, toggleExpand: (identifier: string) => void }) => {
   const [profileSession] = useProfileSession();
   const [databaseSettingList, setDatabaseSettingList] = useDatabaseSetting();
 
   const updateDatabaseField = useCallback((endpoint: Endpoint, field: keyof DatabaseSetting[string], value: string | boolean) => {
     if (!endpoint.Address) return;
     const updatedSettings = { ...databaseSettingList };
-    if (!updatedSettings[endpoint.Address]) {
-      updatedSettings[endpoint.Address] = {};
+    const currentUpdatedSettings = updatedSettings[endpoint.Address]??{}
+    
+    if (field === 'tunneling' && typeof value === 'boolean' ) {
+      currentUpdatedSettings.tunneling = value;
+    } else if(typeof value ==='string' ) {
+      switch (field){
+        case 'localPort':
+          currentUpdatedSettings.localPort = value;
+          break;
+        case 'alias':
+          currentUpdatedSettings.alias = value;
+          break;
+      }
     }
-    if (field === 'tunneling') {
-      updatedSettings[endpoint.Address].tunneling = value as boolean;
-    } else {
-      updatedSettings[endpoint.Address][field] = value as string;
-    }
+    updatedSettings[endpoint.Address] = currentUpdatedSettings;
     setDatabaseSettingList(updatedSettings);
     if (field === 'tunneling') {
       const tunnelingData = {
         type: 'database',
-        localPort: updatedSettings[endpoint.Address].localPort,
+        localPort: updatedSettings[endpoint.Address]?.localPort,
         address: endpoint.Address,
         port: endpoint.Port,
         tunneling: value,
@@ -65,7 +72,7 @@ const DatabaseTableRow = ({ database, isExpanded, toggleExpand }: { database: Da
       console.log('tunneling data', tunnelingData)
       IpcRenderer.tunneling(tunnelingData as TunnelingData, profileSession as string, (status) => {
         if (status.tunneling) {
-          toast.success(`Tunneling ${updatedSettings[endpoint.Address as string].alias}`);
+          toast.success(`Tunneling ${updatedSettings[endpoint.Address as string]?.alias}`);
         }
       });
     }

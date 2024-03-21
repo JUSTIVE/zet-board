@@ -11,7 +11,7 @@ export function setTimer(duration: string, callback: () => void): void {
   let match;
   let timeInMs = 0;
 
-  while ((match = regex.exec(duration)) !== null) {
+  while ((match = regex.exec(duration)) !== null && match[1]) {
     const value = parseInt(match[1]);
     const unit = match[2];
 
@@ -51,7 +51,7 @@ export function setRepeater(duration: string, callback: () => Promise<boolean>):
   let match;
   let timeInMs = 0;
 
-  while ((match = regex.exec(duration)) !== null) {
+  while ((match = regex.exec(duration)) !== null && match[1]) {
     const value = parseInt(match[1]);
     const unit = match[2];
 

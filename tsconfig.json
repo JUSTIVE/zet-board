@@ -19,6 +19,7 @@
     "jsx": "preserve",
     "incremental": true,
     "verbatimModuleSyntax": true,
+    "noUncheckedIndexedAccess": true,
     "plugins": [
       {
         "name": "next"
@@ -39,7 +40,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "main/*.ts",
+    
     "release/build/renderer/types/**/*.ts"
   ],
   "exclude": [

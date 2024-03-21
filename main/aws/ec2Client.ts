@@ -13,7 +13,7 @@ interface ClientConfig {
 export async function getInstanceId(
   config: ClientConfig,
   instanceName: string,
-): Promise<string> {
+): Promise<string|undefined> {
   const client = new EC2Client(config);
   const command = new DescribeInstancesCommand({
     Filters: [ // FilterList
@@ -27,6 +27,6 @@ export async function getInstanceId(
   });
   const response = await client.send(command);
   if (!response.Reservations) return '';
-  const instanceId = response.Reservations?.[0]?.Instances?.[0].InstanceId;
+  const instanceId = response.Reservations?.[0]?.Instances?.[0]?.InstanceId;
   return instanceId as string;
 }

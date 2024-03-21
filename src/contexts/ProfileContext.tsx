@@ -26,9 +26,10 @@ function profileReducer(profileList: Profile[], action: ProfileAction): Profile[
           : profile
       );
     case ProfileActionTypes.DeleteProfile:
-      const filteredProfiles = profileList.filter(profile => profile.profileName !== action.payload);
-      const sortedProfiles = filteredProfiles.sort((a, b) => a.idx - b.idx);
-      return sortedProfiles.map((profile, index) => ({ ...profile, idx: index }));
+      return profileList
+        .filter(profile => profile.profileName !== action.payload)
+        .sort((a, b) => a.idx - b.idx)
+        .map((profile, idx) => ({ ...profile, idx}));
     case ProfileActionTypes.SwapProfileIdxUp:
     case ProfileActionTypes.SwapProfileIdxDown:
       let newList = [...profileList];

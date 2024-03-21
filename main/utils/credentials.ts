@@ -17,8 +17,8 @@ export async function getAwsCredentials(profile: string): Promise<AwsCredentials
   let currentProfile = '';
   let credentials: AwsCredentials | null = null; // 초기값을 null로 설정
   for (const line of lines) {
-    const profileMatch = line.match(/^\[(.+)\]$/);
-    if (profileMatch) {
+  const profileMatch = line.match(/^\[(.+)\]$/);
+    if (profileMatch && profileMatch[1]) {
       currentProfile = profileMatch[1];
     } else if (currentProfile === profile) {
       const matchAccessKey = line.match(/^aws_access_key_id\s*=\s*(.+)$/);
